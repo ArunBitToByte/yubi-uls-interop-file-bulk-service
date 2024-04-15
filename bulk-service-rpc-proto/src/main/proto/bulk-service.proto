@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package com.yubi.uls.interop.bulkservice.proto;
+
+import "bulk-request.proto";
+
+service BulkService {
+  rpc startJob(BulkRequest) returns (BulkResponse);
+}

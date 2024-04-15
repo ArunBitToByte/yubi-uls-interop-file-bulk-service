@@ -1,0 +1,57 @@
+plugins { id 'de.undercouch.download' version '5.3.0' }
+
+allprojects {
+    group = 'com.yubi.uls.file.bulk'
+    version = "0.0.1-SNAPSHOT"
+
+    apply plugin: 'java'
+    apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'jacoco'
+    build.dependsOn jacocoTestReport
+
+    jacocoTestReport {
+        reports {
+            xml.required = true
+        }
+    }
+
+    repositories {
+        mavenCentral()
+        maven {
+            url 'https://yubi-artifact-155577958684.d.codeartifact.ap-south-1.amazonaws.com/maven/interop/'
+            credentials {
+                username "aws"
+                password System.env.CODEARTIFACT_AUTH_TOKEN
+            }
+        }
+        mavenLocal()
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+            }
+        }
+        repositories {
+            maven {
+                url 'https://yubi-artifact-155577958684.d.codeartifact.ap-south-1.amazonaws.com/maven/interop/'
+                credentials {
+                    username "aws"
+                    password System.env.CODEARTIFACT_AUTH_TOKEN
+                }
+            }
+        }
+    }
+
+    tasks.register('downloadNewrelic', Download) {
+        mkdir 'newrelic'
+        src 'https://download.newrelic.com/newrelic/java-agent/newrelic-agent/current/newrelic-java.zip'
+        dest file('newrelic')
+    }
+    tasks.register('unzipNewrelic', Copy) {
+        from zipTree(file('newrelic/newrelic-java.zip'))
+        into rootDir
+    }
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+package com.yubi.uls.interop.bulkservice.proto;
+
+message Error{
+    string message = 1;
+    string ErrorCode = 2;
+}
+
+message BaseResponse{
+    bool success = 1;
+}
+
+

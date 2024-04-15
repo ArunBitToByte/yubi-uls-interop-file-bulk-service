@@ -1,0 +1,42 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
+}
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+    id 'org.springframework.boot' version '2.7.4' apply false
+}
+
+
+sourceCompatibility = '17'
+
+
+// Note: for IntelliJ IDE to mark the generated files as source.
+sourceSets {
+    src {
+        main {
+            java {
+                srcDirs 'build/generated/source/proto/main/grpc'
+                srcDirs 'build/generated/source/proto/main/java'
+            }
+        }
+    }
+}
+
+
+dependencies {
+    api 'io.temporal:temporal-sdk:1.20.1'
+    api "io.temporal:temporal-testing:1.20.1"// Java 9+ compatibility - Do NOT update to 2.0.0
+    compileOnly 'org.projectlombok:lombok:1.18.26'
+    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+}
+
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

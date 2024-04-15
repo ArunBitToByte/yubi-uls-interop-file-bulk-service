@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+option java_multiple_files = true;
+package com.yubi.uls.interop.bulkservice.proto;
+import "common.proto";
+
+message Job {
+  string jobId = 1;
+}
+
+message BulkRequest{
+  message Data {
+    Job job = 1;
+  }
+  string requestId = 1;
+  Data data = 2;
+}
+
+message BulkResponse{
+  message Data{
+    Job job = 1;
+  }
+  Data data = 2;
+}
+

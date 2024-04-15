@@ -1,0 +1,44 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: InteropLoanService
+  description: Loan service for Interop
+  annotations: # [optional]
+    jenkins.io/job-full-name: /Interoperability/Api/Int/Loan-Service/build-image
+  tags: # [optional]
+    - java
+    - gradle
+    - spring-boot
+    - kafka
+    - temporal
+    - mongodb
+    - postgres
+spec:
+  type: service # [can be service/website/library/any other type]
+  lifecycle: production # [can be experimental/production/deprecated]
+  owner: group:ULS # [Should be any one of the groups/users already defined]
+  system: ULS # [Should be any one of the systems already defined]
+  dependsOn: # [optional]
+    - resource:los_loans
+    - resource:lms_loans
+    - component:InteropCustomerService
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: los_loans
+  description: Interop LOS Loans
+spec:
+  type: database # [can be database/s3-bucket/cluster/any other type]
+  owner: group:ULS # [Should be any one of the groups/users already
+  lifecycle: production # [can be experimental/production/deprecated]
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: lms_loans
+  description: Interop LMS Loans
+spec:
+  type: database # [can be database/s3-bucket/cluster/any other type]
+  owner: group:ULS # [Should be any one of the groups/users already
+  lifecycle: production # [can be experimental/production/deprecated]
