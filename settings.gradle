@@ -1,0 +1,4 @@
+rootProject.name = 'file-bulk-service'
+include 'file-bulk-service'
+
+
