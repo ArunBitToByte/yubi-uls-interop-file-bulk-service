@@ -1,9 +1,12 @@
 package com.yubi.uls.file.bulk.service;
 
 import com.yubi.uls.bulk.core.client.temporal.impl.ChunkProcessorActivityImpl;
+import com.yubi.uls.bulk.core.client.temporal.impl.DefaultChunkProcessorActivityImpl;
 import com.yubi.uls.bulk.core.client.temporal.impl.PartitionerActivityImpl;
-import com.yubi.uls.file.bulk.dto.ProcessorItem;
-import com.yubi.uls.file.bulk.dto.ReaderItem;
+import com.yubi.uls.bulk.core.client.temporal.impl.PartitionerDuckDbImpl;
+import com.yubi.uls.bulk.core.impl.DefaultJobImpl;
+import com.yubi.uls.bulk.core.impl.DefaultPartitionHandlerChildWorkflow;
+import com.yubi.uls.file.bulk.dto.Item;
 import com.yubi.uls.file.bulk.impl.*;
 import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
@@ -28,8 +31,17 @@ public class JobWorkerDuckDB {
         WorkflowClient client = WorkflowClient.newInstance(service);
         WorkerFactory factory = WorkerFactory.newInstance(client);
         Worker worker = factory.newWorker(TASK_QUEUE);
-        ChunkProcessorActivityImpl.ChunkProcessorActivityImplBuilder<ReaderItem, ProcessorItem> builder =  ChunkProcessorActivityImpl.builder();
-        worker.registerActivitiesImplementations(PartitionerActivityImpl.builder().partitioner(new PartitionerDuckDbImpl()).build(),  builder.reader(new ReaderDuckDbImpl()).writer(new WriterImpl()).build());
+
+        // Registering the item processor activities
+        DefaultChunkProcessorActivityImpl.DefaultChunkProcessorActivityImplBuilder<Item> builder =  DefaultChunkProcessorActivityImpl.builder();
+        worker.registerActivitiesImplementations(builder.itemProcessor(new ItemProcessorImpl()).build());
+
+        // Registering the workflow
+        worker.registerWorkflowImplementationTypes(
+                DefaultJobImpl.class, DefaultPartitionHandlerChildWorkflow.class);
+        // Registering the partition activities
+        worker.registerActivitiesImplementations(PartitionerActivityImpl.builder().partitioner(new PartitionerDuckDbImpl()).build());
+
         factory.start();
         log.info("Worker started for task queue: {}", TASK_QUEUE);
     }
