@@ -13,7 +13,6 @@ public class FileBulkProcessingApplication {
     ApplicationContext applicationContext = SpringApplication.run(FileBulkProcessingApplication.class, args);
     JobWorkerDuckDB jobWorkerDuckDB = applicationContext.getBean(JobWorkerDuckDB.class);
     Starter jobStarter = applicationContext.getBean(Starter.class);
-
     jobWorkerDuckDB.run();
     jobStarter.launchJob();
   }

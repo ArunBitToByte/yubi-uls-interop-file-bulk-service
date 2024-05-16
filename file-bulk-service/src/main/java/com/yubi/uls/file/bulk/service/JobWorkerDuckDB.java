@@ -1,9 +1,6 @@
 package com.yubi.uls.file.bulk.service;
 
-import com.yubi.uls.bulk.core.client.temporal.impl.ChunkProcessorActivityImpl;
-import com.yubi.uls.bulk.core.client.temporal.impl.DefaultChunkProcessorActivityImpl;
-import com.yubi.uls.bulk.core.client.temporal.impl.PartitionerActivityImpl;
-import com.yubi.uls.bulk.core.client.temporal.impl.PartitionerDuckDbImpl;
+import com.yubi.uls.bulk.core.client.temporal.impl.*;
 import com.yubi.uls.bulk.core.impl.DefaultJobImpl;
 import com.yubi.uls.bulk.core.impl.DefaultPartitionHandlerChildWorkflow;
 import com.yubi.uls.file.bulk.dto.Item;
@@ -33,8 +30,8 @@ public class JobWorkerDuckDB {
         Worker worker = factory.newWorker(TASK_QUEUE);
 
         // Registering the item processor activities
-        DefaultChunkProcessorActivityImpl.DefaultChunkProcessorActivityImplBuilder<Item> builder =  DefaultChunkProcessorActivityImpl.builder();
-        worker.registerActivitiesImplementations(builder.itemProcessor(new ItemProcessorImpl()).build());
+        DefaultChunkProcessorActivityImpl.DefaultChunkProcessorActivityImplBuilder<String> builder =  DefaultChunkProcessorActivityImpl.builder();
+        worker.registerActivitiesImplementations(builder.itemProcessor(DefaultItemProcessorWrapper.builder().itemProcessor(new ItemProcessorImpl()).build()).build());
 
         // Registering the workflow
         worker.registerWorkflowImplementationTypes(
